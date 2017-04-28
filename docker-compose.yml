@@ -1,0 +1,26 @@
+version: "2"
+services:
+  seed:
+    build: .
+    links:
+      - mysql
+    command: "./maybe-create-database.sh"
+    environment:
+      - ZM_DB_HOST=mysql
+      - ZM_DB_USER=root
+      - ZM_DB_NAME=zm
+  zm:
+    build: .
+    links:
+      - mysql
+    ports:
+      - "3006:80"
+    volumes:
+      - /Users/bradseefeld/workspace/zoneminder/pids:/var/run/zm
+      - /Users/bradseefeld/workspace/zoneminder/cache:/var/cache/zoneminder
+  mysql:
+    image: "mysql:5.6.35"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    volumes:
+      - /Users/bradseefeld/workspace/zoneminder/my.cnf:/etc/mysql/conf.d/zoneminder.cnf:ro
